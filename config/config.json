@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "check-out-file-wp-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/checkOutFileWp/CheckOutFileWpWebPart.js",
+          "manifest": "./src/webparts/checkOutFileWp/CheckOutFileWpWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "CheckOutFileWpWebPartStrings": "lib/webparts/checkOutFileWp/loc/{locale}.js"
+  }
+}
