@@ -10,6 +10,7 @@ import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 import * as strings from "CheckOutFileWpWebPartStrings";
 import CheckOutFileWp from "./components/CheckOutFileWp";
 import { ICheckOutFileWpProps } from "./components/ICheckOutFileWpProps";
+import { getSP } from "../../PnpConfig";
 
 export interface ICheckOutFileWpWebPartProps {
   description: string;
@@ -29,7 +30,9 @@ export default class CheckOutFileWpWebPart extends BaseClientSideWebPart<ICheckO
     ReactDom.render(element, this.domElement);
   }
 
-  public async onInit(): Promise<void> {}
+  public async onInit(): Promise<void> {
+    getSP(this.context);
+  }
 
   protected onDispose(): void {
     ReactDom.unmountComponentAtNode(this.domElement);
