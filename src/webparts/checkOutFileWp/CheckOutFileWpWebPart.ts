@@ -8,7 +8,7 @@ import {
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 
 import * as strings from "CheckOutFileWpWebPartStrings";
-import CheckOutFileWp from "./components/CheckOutFileWp";
+import CheckOutFileWpv1 from "./components/CheckOutFileWpv1";
 import { ICheckOutFileWpProps } from "./components/ICheckOutFileWpProps";
 import { getSP } from "../../PnpConfig";
 
@@ -20,7 +20,7 @@ export default class CheckOutFileWpWebPart extends BaseClientSideWebPart<ICheckO
   private libraryName: string = "Master Project Assets - Sandbox";
   public render(): void {
     const element: React.ReactElement<ICheckOutFileWpProps> =
-      React.createElement(CheckOutFileWp, {
+      React.createElement(CheckOutFileWpv1, {
         userDisplayName: this.context.pageContext.user.displayName,
         context: this.context,
         userEmail: this.context.pageContext.user.email,

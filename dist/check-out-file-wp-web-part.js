@@ -1,4 +1,4 @@
-define("a312068e-8adf-4a32-a310-1ad8432994b8_0.0.1", ["react","react-dom","@microsoft/sp-core-library","@microsoft/sp-property-pane","@microsoft/sp-webpart-base","CheckOutFileWpWebPartStrings","@microsoft/sp-http"], (__WEBPACK_EXTERNAL_MODULE__2650__, __WEBPACK_EXTERNAL_MODULE__2729__, __WEBPACK_EXTERNAL_MODULE__3878__, __WEBPACK_EXTERNAL_MODULE__4723__, __WEBPACK_EXTERNAL_MODULE__3134__, __WEBPACK_EXTERNAL_MODULE__7967__, __WEBPACK_EXTERNAL_MODULE__3272__) => { return /******/ (() => { // webpackBootstrap
+define("a312068e-8adf-4a32-a310-1ad8432994b8_0.0.1", ["react","react-dom","@microsoft/sp-core-library","@microsoft/sp-property-pane","@microsoft/sp-webpart-base","CheckOutFileWpWebPartStrings"], (__WEBPACK_EXTERNAL_MODULE__2650__, __WEBPACK_EXTERNAL_MODULE__2729__, __WEBPACK_EXTERNAL_MODULE__3878__, __WEBPACK_EXTERNAL_MODULE__4723__, __WEBPACK_EXTERNAL_MODULE__3134__, __WEBPACK_EXTERNAL_MODULE__7967__) => { return /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
@@ -37,10 +37,10 @@ var getSP = function (context) {
 
 /***/ }),
 
-/***/ 9043:
-/*!******************************************************************!*\
-  !*** ./lib/webparts/checkOutFileWp/components/CheckOutFileWp.js ***!
-  \******************************************************************/
+/***/ 9366:
+/*!********************************************************************!*\
+  !*** ./lib/webparts/checkOutFileWp/components/CheckOutFileWpv1.js ***!
+  \********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
@@ -48,8 +48,12 @@ var getSP = function (context) {
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ 2650);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _microsoft_sp_http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @microsoft/sp-http */ 3272);
-/* harmony import */ var _microsoft_sp_http__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_microsoft_sp_http__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _PnpConfig__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../PnpConfig */ 9230);
+/* harmony import */ var _pnp_sp_webs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @pnp/sp/webs */ 3867);
+/* harmony import */ var _pnp_sp_lists__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @pnp/sp/lists */ 2033);
+/* harmony import */ var _pnp_sp_items__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @pnp/sp/items */ 9721);
+/* harmony import */ var _pnp_sp_batching__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @pnp/sp/batching */ 8018);
+/* harmony import */ var _pnp_sp_files__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @pnp/sp/files */ 7901);
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -88,179 +92,55 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 };
 
 
-// import { Guid } from "@microsoft/sp-core-library";
-var CheckOutFileWp = function (_a) {
-    var context = _a.context, libraryName = _a.libraryName, userEmail = _a.userEmail;
-    var getRequestDigestValue = function (context) { return __awaiter(void 0, void 0, void 0, function () {
-        var url, httpClientOptions, response, data, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+
+
+
+
+
+var CheckOutFileWpv1 = function (_a) {
+    var libraryName = _a.libraryName, userEmail = _a.userEmail;
+    var LOG_SOURCE = "CheckOutFileWp";
+    var sp = (0,_PnpConfig__WEBPACK_IMPORTED_MODULE_1__.getSP)();
+    var getFilesAndCheckout = function () { return __awaiter(void 0, void 0, void 0, function () {
+        var files, _a, batchedWeb_1, executeBatch, error_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    url = "".concat(context.pageContext.web.absoluteUrl, "/_api/contextinfo");
-                    httpClientOptions = {
-                        method: "POST",
-                        headers: new Headers({
-                            Accept: "application/json;odata=nometadata",
-                        }),
-                    };
-                    _a.label = 1;
+                    _b.trys.push([0, 4, , 5]);
+                    return [4 /*yield*/, sp.web.lists
+                            .getByTitle(libraryName)
+                            .items.select("Title", "OData__ModerationStatus", "FileLeafRef", "FileRef", "File_x0020_Type", "ID", "ContactPerson/EMail")
+                            .expand("ContactPerson")
+                            .filter("OData__ModerationStatus eq 1 and ContactPerson/EMail eq '".concat(userEmail, "'"))()];
                 case 1:
-                    _a.trys.push([1, 6, , 7]);
-                    return [4 /*yield*/, context.httpClient.post(url, _microsoft_sp_http__WEBPACK_IMPORTED_MODULE_1__.HttpClient.configurations.v1, httpClientOptions)];
+                    files = _b.sent();
+                    console.info("".concat(LOG_SOURCE, " - Files to checkout: ").concat(files));
+                    if (!(files.length > 0)) return [3 /*break*/, 3];
+                    _a = sp.web.batched(), batchedWeb_1 = _a[0], executeBatch = _a[1];
+                    files.forEach(function (item) {
+                        batchedWeb_1.getFileByServerRelativePath(item.FileRef).checkout();
+                    });
+                    return [4 /*yield*/, executeBatch()];
                 case 2:
-                    response = _a.sent();
-                    if (!response.ok) return [3 /*break*/, 4];
-                    return [4 /*yield*/, response.json()];
-                case 3:
-                    data = _a.sent();
-                    return [2 /*return*/, data.FormDigestValue]; // This is the Request Digest value
+                    _b.sent();
+                    console.info("".concat(LOG_SOURCE, " - Files checked out successfully"));
+                    window.location.reload();
+                    _b.label = 3;
+                case 3: return [3 /*break*/, 5];
                 case 4:
-                    console.error("Failed to retrieve Request Digest value:", response.statusText);
-                    throw new Error("Failed to retrieve Request Digest value");
-                case 5: return [3 /*break*/, 7];
-                case 6:
-                    error_1 = _a.sent();
-                    console.error("Error fetching Request Digest value:", error_1);
-                    throw error_1;
-                case 7: return [2 /*return*/];
-            }
-        });
-    }); };
-    var checkOutFiles = function (items) { return __awaiter(void 0, void 0, void 0, function () {
-        var requestDigestValue, _i, items_1, item, fileRef, url, httpClientOptions, response, error_2;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, getRequestDigestValue(context)];
-                case 1:
-                    requestDigestValue = _a.sent();
-                    _i = 0, items_1 = items;
-                    _a.label = 2;
-                case 2:
-                    if (!(_i < items_1.length)) return [3 /*break*/, 7];
-                    item = items_1[_i];
-                    fileRef = item.FileRef;
-                    url = "".concat(context.pageContext.web.absoluteUrl, "/_api/web/GetFileByServerRelativeUrl('").concat(fileRef, "')/CheckOut()");
-                    httpClientOptions = {
-                        headers: new Headers({
-                            Accept: "application/json;odata=nometadata",
-                            "X-RequestDigest": requestDigestValue,
-                        }),
-                        method: "POST",
-                    };
-                    _a.label = 3;
-                case 3:
-                    _a.trys.push([3, 5, , 6]);
-                    return [4 /*yield*/, context.httpClient.post(url, _microsoft_sp_http__WEBPACK_IMPORTED_MODULE_1__.HttpClient.configurations.v1, httpClientOptions)];
-                case 4:
-                    response = _a.sent();
-                    if (response.ok) {
-                        console.log("File checked out successfully: ".concat(fileRef));
-                    }
-                    else {
-                        console.error("Failed to check out file: ".concat(fileRef), response.statusText);
-                        throw new Error("Failed to check out file: ".concat(fileRef));
-                    }
-                    return [3 /*break*/, 6];
-                case 5:
-                    error_2 = _a.sent();
-                    console.error("Error checking out file:", error_2);
-                    throw error_2;
-                case 6:
-                    _i++;
-                    return [3 /*break*/, 2];
-                case 7: return [2 /*return*/];
-            }
-        });
-    }); };
-    // const checkOutFilesbatch = async (items: SanitizeDataItemArray) => {
-    //   const batchUrl = `${context.pageContext.web.absoluteUrl}/_api/$batch`;
-    //   const requestDigestValue = await getRequestDigestValue(context);
-    //   const batchBoundary = `batch_${Guid.newGuid()}`;
-    //   const CRLF = "\r\n";
-    //   const batchBody = items
-    //     .map((item) => {
-    //       const fileRef = item.FileRef;
-    //       return [
-    //         `--${batchBoundary}`,
-    //         "Content-Type: application/http",
-    //         "Content-Transfer-Encoding: binary",
-    //         "",
-    //         `POST /_api/web/GetFileByServerRelativeUrl('${fileRef}')/CheckOut() HTTP/1.1`,
-    //         "Content-Type: application/json;odata=nometadata",
-    //         "Accept: application/json;odata=nometadata",
-    //         `X-RequestDigest: ${requestDigestValue}`,
-    //         "",
-    //         ""
-    //       ].join(CRLF);
-    //     })
-    //     .join("") + `--${batchBoundary}--`;
-    //   const httpClientOptions: IHttpClientOptions = {
-    //     headers: new Headers({
-    //       "Content-Type": `multipart/mixed;boundary=${batchBoundary}`,
-    //       Accept: "application/json;odata=nometadata",
-    //       "X-RequestDigest": requestDigestValue
-    //     }),
-    //     body: batchBody,
-    //     method: "POST"
-    //   };
-    //   try {
-    //     console.log("Batch Body:", batchBody); // For debugging
-    //     const response: HttpClientResponse = await context.httpClient.post(
-    //       batchUrl,
-    //       HttpClient.configurations.v1,
-    //       httpClientOptions
-    //     );
-    //     const responseText = await response.text();
-    //     if (response.ok) {
-    //       console.log("Batch response:", responseText);
-    //     } else {
-    //       console.error("Failed to batch check out files:", responseText);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error in batch request:", error);
-    //   }
-    // };
-    var fetchData = function () { return __awaiter(void 0, void 0, void 0, function () {
-        var url, httpClientOptions, response, data, items, error_3;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    url = "".concat(context.pageContext.web.absoluteUrl, "/_api/web/lists/getbytitle('").concat(libraryName, "')/items?$select=OData__ModerationStatus,Title,FileRef,FileLeafRef,File_x0020_Type,ID,ContactPerson/EMail,ContactPerson/Title&$expand=ContactPerson&$filter=ContactPerson/EMail eq '").concat(userEmail, "' and OData__ModerationStatus eq 1&$top=1000");
-                    httpClientOptions = {
-                        headers: new Headers({
-                            Accept: "application/json;odata=nometadata",
-                        }),
-                    };
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 4, , 5]);
-                    return [4 /*yield*/, context.httpClient.get(url, _microsoft_sp_http__WEBPACK_IMPORTED_MODULE_1__.HttpClient.configurations.v1, httpClientOptions)];
-                case 2:
-                    response = _a.sent();
-                    if (!response.ok) {
-                        console.error("Error fetching data: ", response.statusText);
-                        return [2 /*return*/];
-                    }
-                    return [4 /*yield*/, response.json()];
-                case 3:
-                    data = _a.sent();
-                    items = data.value;
-                    checkOutFiles(items);
-                    return [3 /*break*/, 5];
-                case 4:
-                    error_3 = _a.sent();
-                    console.error("Error fetching data: ", error_3);
+                    error_1 = _b.sent();
+                    console.error("".concat(LOG_SOURCE, " - Error checking out files: ").concat(error_1));
                     return [3 /*break*/, 5];
                 case 5: return [2 /*return*/];
             }
         });
     }); };
     react__WEBPACK_IMPORTED_MODULE_0__.useEffect(function () {
-        fetchData();
+        getFilesAndCheckout();
     }, []);
-    return react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null);
+    return react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null);
 };
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (CheckOutFileWp);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (CheckOutFileWpv1);
 
 
 /***/ }),
@@ -272,16 +152,6 @@ var CheckOutFileWp = function (_a) {
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__3878__;
-
-/***/ }),
-
-/***/ 3272:
-/*!*************************************!*\
-  !*** external "@microsoft/sp-http" ***!
-  \*************************************/
-/***/ ((module) => {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__3272__;
 
 /***/ }),
 
@@ -2398,9 +2268,10 @@ function CachingPessimisticRefresh(props) {
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CacheNever: () => (/* binding */ CacheNever),
 /* harmony export */   bindCachingCore: () => (/* binding */ bindCachingCore)
 /* harmony export */ });
-/* unused harmony exports CacheAlways, CacheNever, CacheKey, Caching */
+/* unused harmony exports CacheAlways, CacheKey, Caching */
 /* harmony import */ var _pnp_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pnp/core */ 1971);
 
 /**
@@ -2514,7 +2385,11 @@ function bindCachingCore(url, init, props) {
   \*************************************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-/* unused harmony exports asCancelableScope, cancelableScope, Cancelable, CancelAction */
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CancelAction: () => (/* binding */ CancelAction),
+/* harmony export */   cancelableScope: () => (/* binding */ cancelableScope)
+/* harmony export */ });
+/* unused harmony exports asCancelableScope, Cancelable */
 /* harmony import */ var _pnp_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pnp/core */ 1971);
 
 /**
@@ -2747,6 +2622,8 @@ function InjectHeaders(headers, prepend = false) {
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BlobParse: () => (/* binding */ BlobParse),
+/* harmony export */   BufferParse: () => (/* binding */ BufferParse),
 /* harmony export */   DefaultParse: () => (/* binding */ DefaultParse),
 /* harmony export */   HttpRequestError: () => (/* binding */ HttpRequestError),
 /* harmony export */   JSONParse: () => (/* binding */ JSONParse),
@@ -2754,7 +2631,7 @@ function InjectHeaders(headers, prepend = false) {
 /* harmony export */   parseBinderWithErrorCheck: () => (/* binding */ parseBinderWithErrorCheck),
 /* harmony export */   parseODataJSON: () => (/* binding */ parseODataJSON)
 /* harmony export */ });
-/* unused harmony exports BlobParse, BufferParse, HeaderParse, JSONHeaderParse, errorCheck */
+/* unused harmony exports HeaderParse, JSONHeaderParse, errorCheck */
 /* harmony import */ var _pnp_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pnp/core */ 1971);
 
 
@@ -2894,7 +2771,11 @@ function RejectOnError() {
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BlobParse: () => (/* reexport safe */ _behaviors_parsers_js__WEBPACK_IMPORTED_MODULE_7__.BlobParse),
 /* harmony export */   BrowserFetchWithRetry: () => (/* reexport safe */ _behaviors_browser_fetch_js__WEBPACK_IMPORTED_MODULE_2__.BrowserFetchWithRetry),
+/* harmony export */   BufferParse: () => (/* reexport safe */ _behaviors_parsers_js__WEBPACK_IMPORTED_MODULE_7__.BufferParse),
+/* harmony export */   CacheNever: () => (/* reexport safe */ _behaviors_caching_js__WEBPACK_IMPORTED_MODULE_3__.CacheNever),
+/* harmony export */   CancelAction: () => (/* reexport safe */ _behaviors_cancelable_js__WEBPACK_IMPORTED_MODULE_5__.CancelAction),
 /* harmony export */   DefaultParse: () => (/* reexport safe */ _behaviors_parsers_js__WEBPACK_IMPORTED_MODULE_7__.DefaultParse),
 /* harmony export */   InjectHeaders: () => (/* reexport safe */ _behaviors_inject_headers_js__WEBPACK_IMPORTED_MODULE_6__.InjectHeaders),
 /* harmony export */   JSONParse: () => (/* reexport safe */ _behaviors_parsers_js__WEBPACK_IMPORTED_MODULE_7__.JSONParse),
@@ -2904,6 +2785,7 @@ function RejectOnError() {
 /* harmony export */   TextParse: () => (/* reexport safe */ _behaviors_parsers_js__WEBPACK_IMPORTED_MODULE_7__.TextParse),
 /* harmony export */   addProp: () => (/* binding */ addProp),
 /* harmony export */   body: () => (/* binding */ body),
+/* harmony export */   cancelableScope: () => (/* reexport safe */ _behaviors_cancelable_js__WEBPACK_IMPORTED_MODULE_5__.cancelableScope),
 /* harmony export */   del: () => (/* reexport safe */ _queryable_js__WEBPACK_IMPORTED_MODULE_1__.del),
 /* harmony export */   get: () => (/* reexport safe */ _queryable_js__WEBPACK_IMPORTED_MODULE_1__.get),
 /* harmony export */   headers: () => (/* binding */ headers),
@@ -3829,6 +3711,33 @@ function Telemetry() {
 
 /***/ }),
 
+/***/ 1734:
+/*!****************************************************!*\
+  !*** ./node_modules/@pnp/sp/context-info/index.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __unused_webpack___webpack_exports__, __webpack_require__) => {
+
+/* harmony import */ var _pnp_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pnp/core */ 1971);
+/* harmony import */ var _spqueryable_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../spqueryable.js */ 2678);
+/* harmony import */ var _utils_extract_web_url_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/extract-web-url.js */ 2997);
+
+
+
+_spqueryable_js__WEBPACK_IMPORTED_MODULE_1__._SPQueryable.prototype.getContextInfo = async function (path = this.parentUrl) {
+    const data = await (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_1__.spPost)((0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_1__.SPQueryable)([this, (0,_utils_extract_web_url_js__WEBPACK_IMPORTED_MODULE_2__.extractWebUrl)(path)], "_api/contextinfo"));
+    if ((0,_pnp_core__WEBPACK_IMPORTED_MODULE_0__.hOP)(data, "GetContextWebInformation")) {
+        const info = data.GetContextWebInformation;
+        info.SupportedSchemaVersions = info.SupportedSchemaVersions.results;
+        return info;
+    }
+    else {
+        return data;
+    }
+};
+
+
+/***/ }),
+
 /***/ 6540:
 /*!********************************************!*\
   !*** ./node_modules/@pnp/sp/decorators.js ***!
@@ -3906,6 +3815,1017 @@ function spfi(root = "") {
 
 /***/ }),
 
+/***/ 1872:
+/*!**********************************************!*\
+  !*** ./node_modules/@pnp/sp/files/folder.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack___webpack_module__, __unused_webpack___webpack_exports__, __webpack_require__) => {
+
+/* harmony import */ var _pnp_queryable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pnp/queryable */ 6844);
+/* harmony import */ var _folders_types_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../folders/types.js */ 187);
+/* harmony import */ var _types_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./types.js */ 242);
+
+
+
+(0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.addProp)(_folders_types_js__WEBPACK_IMPORTED_MODULE_1__._Folder, "files", _types_js__WEBPACK_IMPORTED_MODULE_2__.Files);
+
+
+/***/ }),
+
+/***/ 7901:
+/*!*********************************************!*\
+  !*** ./node_modules/@pnp/sp/files/index.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack___webpack_module__, __unused_webpack___webpack_exports__, __webpack_require__) => {
+
+/* harmony import */ var _folder_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./folder.js */ 1872);
+/* harmony import */ var _item_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./item.js */ 6401);
+/* harmony import */ var _web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./web.js */ 6617);
+/* harmony import */ var _types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./types.js */ 242);
+
+
+
+
+
+
+/***/ }),
+
+/***/ 6401:
+/*!********************************************!*\
+  !*** ./node_modules/@pnp/sp/files/item.js ***!
+  \********************************************/
+/***/ ((__unused_webpack___webpack_module__, __unused_webpack___webpack_exports__, __webpack_require__) => {
+
+/* harmony import */ var _pnp_queryable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pnp/queryable */ 6844);
+/* harmony import */ var _items_types_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../items/types.js */ 132);
+/* harmony import */ var _types_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./types.js */ 242);
+
+
+
+(0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.addProp)(_items_types_js__WEBPACK_IMPORTED_MODULE_1__._Item, "file", _types_js__WEBPACK_IMPORTED_MODULE_2__.File, "file");
+
+
+/***/ }),
+
+/***/ 3645:
+/*!*****************************************************!*\
+  !*** ./node_modules/@pnp/sp/files/readable-file.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ReadableFile: () => (/* binding */ ReadableFile)
+/* harmony export */ });
+/* unused harmony export StreamParse */
+/* harmony import */ var _pnp_queryable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pnp/queryable */ 6844);
+/* harmony import */ var _spqueryable_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../spqueryable.js */ 2678);
+
+
+function StreamParse() {
+    return (0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.parseBinderWithErrorCheck)(async (r) => { var _a; return ({ body: r.body, knownLength: parseInt(((_a = r === null || r === void 0 ? void 0 : r.headers) === null || _a === void 0 ? void 0 : _a.get("content-length")) || "-1", 10) }); });
+}
+class ReadableFile extends _spqueryable_js__WEBPACK_IMPORTED_MODULE_1__._SPInstance {
+    /**
+     * Gets the contents of the file as text. Not supported in batching.
+     *
+     */
+    getText() {
+        return this.getParsed((0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.TextParse)());
+    }
+    /**
+     * Gets the contents of the file as a blob, does not work in Node.js. Not supported in batching.
+     *
+     */
+    getBlob() {
+        return this.getParsed((0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.BlobParse)());
+    }
+    /**
+     * Gets the contents of a file as an ArrayBuffer, works in Node.js. Not supported in batching.
+     */
+    getBuffer() {
+        return this.getParsed((0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.BufferParse)());
+    }
+    /**
+     * Gets the contents of a file as an ArrayBuffer, works in Node.js. Not supported in batching.
+     */
+    getJSON() {
+        return this.getParsed((0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.JSONParse)());
+    }
+    /**
+     * Gets the content of a file as a ReadableStream
+     *
+     */
+    getStream() {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_1__.SPQueryable)(this, "$value").using(StreamParse(), (0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.CacheNever)())((0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.headers)({ "binaryStringResponseBody": "true" }));
+    }
+    getParsed(parser) {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_1__.SPQueryable)(this, "$value").using(parser, (0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.CacheNever)())();
+    }
+}
+
+
+/***/ }),
+
+/***/ 242:
+/*!*********************************************!*\
+  !*** ./node_modules/@pnp/sp/files/types.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   File: () => (/* binding */ File),
+/* harmony export */   Files: () => (/* binding */ Files),
+/* harmony export */   fileFromServerRelativePath: () => (/* binding */ fileFromServerRelativePath)
+/* harmony export */ });
+/* unused harmony exports _Files, _File, fileFromAbsolutePath, fileFromPath, _Versions, Versions, _Version, Version, CheckinType, MoveOperations, TemplateFileType */
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! tslib */ 4346);
+/* harmony import */ var _pnp_queryable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pnp/queryable */ 6844);
+/* harmony import */ var _pnp_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pnp/core */ 1971);
+/* harmony import */ var _spqueryable_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../spqueryable.js */ 2678);
+/* harmony import */ var _items_index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../items/index.js */ 9721);
+/* harmony import */ var _utils_odata_url_from_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/odata-url-from.js */ 905);
+/* harmony import */ var _decorators_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../decorators.js */ 6540);
+/* harmony import */ var _utils_extract_web_url_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/extract-web-url.js */ 2997);
+/* harmony import */ var _utils_to_resource_path_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../utils/to-resource-path.js */ 4259);
+/* harmony import */ var _utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/encode-path-str.js */ 4729);
+/* harmony import */ var _readable_file_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./readable-file.js */ 3645);
+/* harmony import */ var _batching_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../batching.js */ 8018);
+/* harmony import */ var _context_info_index_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../context-info/index.js */ 1734);
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Describes a collection of File objects
+ *
+ */
+let _Files = class _Files extends _spqueryable_js__WEBPACK_IMPORTED_MODULE_2__._SPCollection {
+    /**
+     * Gets a File by filename
+     *
+     * @param name The name of the file, including extension.
+     */
+    getByUrl(name) {
+        if (/%#/.test(name)) {
+            throw Error("For file names containing % or # please use web.getFileByServerRelativePath");
+        }
+        return File(this).concat(`('${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(name)}')`);
+    }
+    /**
+     * Adds a file using the pound percent safe methods
+     *
+     * @param url Encoded url of the file
+     * @param content The file content
+     * @param parameters Additional parameters to control method behavior
+     */
+    async addUsingPath(url, content, parameters = { Overwrite: false }) {
+        const path = [`AddUsingPath(decodedurl='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(url)}'`];
+        if (parameters) {
+            if (parameters.Overwrite) {
+                path.push(",Overwrite=true");
+            }
+            if (parameters.EnsureUniqueFileName) {
+                path.push(`,EnsureUniqueFileName=${parameters.EnsureUniqueFileName}`);
+            }
+            if (parameters.AutoCheckoutOnInvalidData) {
+                path.push(",AutoCheckoutOnInvalidData=true");
+            }
+            if (!(0,_pnp_core__WEBPACK_IMPORTED_MODULE_1__.stringIsNullOrEmpty)(parameters.XorHash)) {
+                path.push(`,XorHash=${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(parameters.XorHash)}`);
+            }
+        }
+        path.push(")");
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(Files(this, path.join("")), { body: content });
+    }
+    /**
+     * Uploads a file. Not supported for batching
+     *
+     * @param url The folder-relative url of the file.
+     * @param content The Blob file content to add
+     * @param props Set of optional values that control the behavior of the underlying addUsingPath and chunkedUpload feature
+     * @returns The new File and the raw response.
+     */
+    async addChunked(url, content, props) {
+        // add an empty stub
+        const response = await this.addUsingPath(url, null, props);
+        const file = fileFromServerRelativePath(this, response.ServerRelativeUrl);
+        file.using((0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.CancelAction)(() => {
+            return File(file).delete();
+        }));
+        return file.setContentChunked(content, props);
+    }
+    /**
+     * Adds a ghosted file to an existing list or document library. Not supported for batching.
+     *
+     * @param fileUrl The server-relative url where you want to save the file.
+     * @param templateFileType The type of use to create the file.
+     * @returns The template file that was added and the raw response.
+     */
+    async addTemplateFile(fileUrl, templateFileType) {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(Files(this, `addTemplateFile(urloffile='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(fileUrl)}',templatefiletype=${templateFileType})`));
+    }
+};
+(0,tslib__WEBPACK_IMPORTED_MODULE_10__.__decorate)([
+    _pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.cancelableScope
+], _Files.prototype, "addUsingPath", null);
+(0,tslib__WEBPACK_IMPORTED_MODULE_10__.__decorate)([
+    _pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.cancelableScope
+], _Files.prototype, "addChunked", null);
+(0,tslib__WEBPACK_IMPORTED_MODULE_10__.__decorate)([
+    _pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.cancelableScope
+], _Files.prototype, "addTemplateFile", null);
+_Files = (0,tslib__WEBPACK_IMPORTED_MODULE_10__.__decorate)([
+    (0,_decorators_js__WEBPACK_IMPORTED_MODULE_11__.defaultPath)("files")
+], _Files);
+
+const Files = (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spInvokableFactory)(_Files);
+/**
+ * Describes a single File instance
+ *
+ */
+class _File extends _readable_file_js__WEBPACK_IMPORTED_MODULE_7__.ReadableFile {
+    constructor() {
+        super(...arguments);
+        this.delete = (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.deleteableWithETag)();
+    }
+    /**
+     * Gets a value that specifies the list item field values for the list item corresponding to the file.
+     *
+     */
+    get listItemAllFields() {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.SPInstance)(this, "listItemAllFields");
+    }
+    /**
+     * Gets a collection of versions
+     *
+     */
+    get versions() {
+        return Versions(this);
+    }
+    /**
+     * Gets the current locked by user
+     *
+     */
+    async getLockedByUser() {
+        const u = await (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spGet)(File(this, "lockedByUser"));
+        if (u["odata.null"] === true) {
+            return null;
+        }
+        else {
+            return u;
+        }
+    }
+    /**
+     * Approves the file submitted for content approval with the specified comment.
+     * Only documents in lists that are enabled for content approval can be approved.
+     *
+     * @param comment The comment for the approval.
+     */
+    approve(comment = "") {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(this, `approve(comment='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(comment)}')`));
+    }
+    /**
+     * Stops the chunk upload session without saving the uploaded data. Does not support batching.
+     * If the file doesn’t already exist in the library, the partially uploaded file will be deleted.
+     * Use this in response to user action (as in a request to cancel an upload) or an error or exception.
+     * Use the uploadId value that was passed to the StartUpload method that started the upload session.
+     * This method is currently available only on Office 365.
+     *
+     * @param uploadId The unique identifier of the upload session.
+     */
+    cancelUpload(uploadId) {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(this, `cancelUpload(uploadId=guid'${uploadId}')`));
+    }
+    /**
+     * Checks the file in to a document library based on the check-in type.
+     *
+     * @param comment A comment for the check-in. Its length must be <= 1023.
+     * @param checkinType The check-in type for the file.
+     */
+    checkin(comment = "", checkinType = CheckinType.Major) {
+        if (comment.length > 1023) {
+            throw Error("The maximum comment length is 1023 characters.");
+        }
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(this, `checkin(comment='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(comment)}',checkintype=${checkinType})`));
+    }
+    /**
+     * Checks out the file from a document library.
+     */
+    checkout() {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(this, "checkout"));
+    }
+    /**
+     * Copies the file to the destination url.
+     *
+     * @param url The absolute url or server relative url of the destination file path to copy to.
+     * @param shouldOverWrite Should a file with the same name in the same location be overwritten?
+     */
+    copyTo(url, shouldOverWrite = true) {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(this, `copyTo(strnewurl='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(url)}',boverwrite=${shouldOverWrite})`));
+    }
+    async copyByPath(destUrl, ...rest) {
+        let options = {
+            ShouldBypassSharedLocks: true,
+            ResetAuthorAndCreatedOnCopy: true,
+            KeepBoth: false,
+        };
+        if (rest.length === 2) {
+            if (typeof rest[1] === "boolean") {
+                options.KeepBoth = rest[1];
+            }
+            else if (typeof rest[1] === "object") {
+                options = { ...options, ...rest[1] };
+            }
+        }
+        return this.moveCopyImpl(destUrl, options, rest[0], "CopyFileByPath");
+    }
+    /**
+     * Denies approval for a file that was submitted for content approval.
+     * Only documents in lists that are enabled for content approval can be denied.
+     *
+     * @param comment The comment for the denial.
+     */
+    deny(comment = "") {
+        if (comment.length > 1023) {
+            throw Error("The maximum comment length is 1023 characters.");
+        }
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(this, `deny(comment='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(comment)}')`));
+    }
+    async moveByPath(destUrl, ...rest) {
+        let options = {
+            KeepBoth: false,
+            ShouldBypassSharedLocks: true,
+            RetainEditorAndModifiedOnMove: false,
+        };
+        if (rest.length === 2) {
+            if (typeof rest[1] === "boolean") {
+                options.KeepBoth = rest[1];
+            }
+            else if (typeof rest[1] === "object") {
+                options = { ...options, ...rest[1] };
+            }
+        }
+        return this.moveCopyImpl(destUrl, options, rest[0], "MoveFileByPath");
+    }
+    /**
+     * Submits the file for content approval with the specified comment.
+     *
+     * @param comment The comment for the published file. Its length must be <= 1023.
+     */
+    publish(comment = "") {
+        if (comment.length > 1023) {
+            throw Error("The maximum comment length is 1023 characters.");
+        }
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(this, `publish(comment='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(comment)}')`));
+    }
+    /**
+     * Moves the file to the Recycle Bin and returns the identifier of the new Recycle Bin item.
+     *
+     * @returns The GUID of the recycled file.
+     */
+    recycle() {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(this, "recycle"));
+    }
+    /**
+     * Deletes the file object with options.
+     *
+     * @param parameters Specifies the options to use when deleting a file.
+     */
+    async deleteWithParams(parameters) {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(this, "DeleteWithParameters"), (0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.body)({ parameters }));
+    }
+    /**
+     * Reverts an existing checkout for the file.
+     *
+     */
+    undoCheckout() {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(this, "undoCheckout"));
+    }
+    /**
+     * Removes the file from content approval or unpublish a major version.
+     *
+     * @param comment The comment for the unpublish operation. Its length must be <= 1023.
+     */
+    unpublish(comment = "") {
+        if (comment.length > 1023) {
+            throw Error("The maximum comment length is 1023 characters.");
+        }
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(this, `unpublish(comment='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(comment)}')`));
+    }
+    /**
+     * Checks to see if the file represented by this object exists
+     *
+     */
+    async exists() {
+        try {
+            const r = await File(this).select("Exists")();
+            return r.Exists;
+        }
+        catch (e) {
+            // this treats any error here as the file not existing, which
+            // might not be true, but is good enough.
+            return false;
+        }
+    }
+    /**
+     * Sets the content of a file, for large files use setContentChunked. Not supported in batching.
+     *
+     * @param content The file content
+     *
+     */
+    async setContent(content) {
+        await (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(this, "$value"), {
+            body: content,
+            headers: {
+                "X-HTTP-Method": "PUT",
+            },
+        });
+        return File(this);
+    }
+    /**
+     * Gets the associated list item for this folder, loading the default properties
+     */
+    async getItem(...selects) {
+        const q = this.listItemAllFields;
+        const d = await q.select(...selects)();
+        return Object.assign((0,_items_index_js__WEBPACK_IMPORTED_MODULE_3__.Item)([this, (0,_utils_odata_url_from_js__WEBPACK_IMPORTED_MODULE_4__.odataUrlFrom)(d)]), d);
+    }
+    /**
+     * Sets the contents of a file using a chunked upload approach. Not supported in batching.
+     *
+     * @param file The file to upload
+     * @param progress A callback function which can be used to track the progress of the upload
+     * @param chunkSize The size of each file slice, in bytes (default: 10485760)
+     */
+    async setContentChunked(file, props) {
+        const { progress } = applyChunckedOperationDefaults(props);
+        const uploadId = (0,_pnp_core__WEBPACK_IMPORTED_MODULE_1__.getGUID)();
+        let first = true;
+        let chunk;
+        let offset = 0;
+        const fileRef = File(this).using((0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.CancelAction)(() => {
+            return File(fileRef).cancelUpload(uploadId);
+        }));
+        const contentStream = sourceToReadableStream(file);
+        const reader = contentStream.getReader();
+        while ((chunk = await reader.read())) {
+            if (chunk.done) {
+                progress({ offset, stage: "finishing", uploadId });
+                return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(fileRef, `finishUpload(uploadId=guid'${uploadId}',fileOffset=${offset})`), { body: (chunk === null || chunk === void 0 ? void 0 : chunk.value) || "" });
+            }
+            else if (first) {
+                progress({ offset, stage: "starting", uploadId });
+                offset = await (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(fileRef, `startUpload(uploadId=guid'${uploadId}')`), { body: chunk.value });
+                first = false;
+            }
+            else {
+                progress({ offset, stage: "continue", uploadId });
+                offset = await (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(File(fileRef, `continueUpload(uploadId=guid'${uploadId}',fileOffset=${offset})`), { body: chunk.value });
+            }
+        }
+    }
+    moveCopyImpl(destUrl, options, overwrite, methodName) {
+        // create a timeline we will manipulate for this request
+        const poster = File(this);
+        // add our pre-request actions, this fixes issues with batching hanging #2668
+        poster.on.pre((0,_pnp_core__WEBPACK_IMPORTED_MODULE_1__.noInherit)(async (url, init, result) => {
+            const { ServerRelativeUrl: srcUrl, ["odata.id"]: absoluteUrl } = await File(this).using((0,_batching_js__WEBPACK_IMPORTED_MODULE_8__.BatchNever)()).select("ServerRelativeUrl")();
+            const webBaseUrl = new URL((0,_utils_extract_web_url_js__WEBPACK_IMPORTED_MODULE_5__.extractWebUrl)(absoluteUrl));
+            url = (0,_pnp_core__WEBPACK_IMPORTED_MODULE_1__.combine)(webBaseUrl.toString(), `/_api/SP.MoveCopyUtil.${methodName}(overwrite=@a1)?@a1=${overwrite}`);
+            init = (0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.body)({
+                destPath: (0,_utils_to_resource_path_js__WEBPACK_IMPORTED_MODULE_12__.toResourcePath)((0,_pnp_core__WEBPACK_IMPORTED_MODULE_1__.isUrlAbsolute)(destUrl) ? destUrl : `${webBaseUrl.protocol}//${webBaseUrl.host}${destUrl}`),
+                options,
+                srcPath: (0,_utils_to_resource_path_js__WEBPACK_IMPORTED_MODULE_12__.toResourcePath)((0,_pnp_core__WEBPACK_IMPORTED_MODULE_1__.isUrlAbsolute)(srcUrl) ? srcUrl : `${webBaseUrl.protocol}//${webBaseUrl.host}${srcUrl}`),
+            }, init);
+            return [url, init, result];
+        }));
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(poster).then(() => fileFromPath(this, destUrl));
+    }
+}
+(0,tslib__WEBPACK_IMPORTED_MODULE_10__.__decorate)([
+    _pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.cancelableScope
+], _File.prototype, "copyByPath", null);
+(0,tslib__WEBPACK_IMPORTED_MODULE_10__.__decorate)([
+    _pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.cancelableScope
+], _File.prototype, "moveByPath", null);
+(0,tslib__WEBPACK_IMPORTED_MODULE_10__.__decorate)([
+    _pnp_queryable__WEBPACK_IMPORTED_MODULE_0__.cancelableScope
+], _File.prototype, "setContentChunked", null);
+const File = (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spInvokableFactory)(_File);
+/**
+ * Creates an IFile instance given a base object and a server relative path
+ *
+ * @param base Valid SPQueryable from which the observers will be used and the web url extracted
+ * @param serverRelativePath The server relative url to the file (ex: '/sites/dev/documents/file.txt')
+ * @returns IFile instance referencing the file described by the supplied parameters
+ */
+function fileFromServerRelativePath(base, serverRelativePath) {
+    return File([base, (0,_utils_extract_web_url_js__WEBPACK_IMPORTED_MODULE_5__.extractWebUrl)(base.toUrl())], `_api/web/getFileByServerRelativePath(decodedUrl='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(serverRelativePath)}')`);
+}
+/**
+ * Creates an IFile instance given a base object and an absolute path
+ *
+ * @param base Valid SPQueryable from which the observers will be used
+ * @param serverRelativePath The absolute url to the file (ex: 'https://tenant.sharepoint.com/sites/dev/documents/file.txt')
+ * @returns IFile instance referencing the file described by the supplied parameters
+ */
+async function fileFromAbsolutePath(base, absoluteFilePath) {
+    const { WebFullUrl } = await File(base).using((0,_batching_js__WEBPACK_IMPORTED_MODULE_8__.BatchNever)()).getContextInfo(absoluteFilePath);
+    const { pathname } = new URL(absoluteFilePath);
+    return fileFromServerRelativePath(File([base, (0,_pnp_core__WEBPACK_IMPORTED_MODULE_1__.combine)(WebFullUrl, "_api/web")]), decodeURIComponent(pathname));
+}
+/**
+ * Creates an IFile intance given a base object and either an absolute or server relative path to a file
+ *
+ * @param base Valid SPQueryable from which the observers will be used
+ * @param serverRelativePath server relative or absolute url to the file (ex: 'https://tenant.sharepoint.com/sites/dev/documents/file.txt' or '/sites/dev/documents/file.txt')
+ * @returns IFile instance referencing the file described by the supplied parameters
+ */
+async function fileFromPath(base, path) {
+    return ((0,_pnp_core__WEBPACK_IMPORTED_MODULE_1__.isUrlAbsolute)(path) ? fileFromAbsolutePath : fileFromServerRelativePath)(base, path);
+}
+/**
+ * Describes a collection of Version objects
+ *
+ */
+let _Versions = class _Versions extends _spqueryable_js__WEBPACK_IMPORTED_MODULE_2__._SPCollection {
+    /**
+     * Gets a version by id
+     *
+     * @param versionId The id of the version to retrieve
+     */
+    getById(versionId) {
+        return Version(this).concat(`(${versionId})`);
+    }
+    /**
+     * Deletes all the file version objects in the collection.
+     *
+     */
+    deleteAll() {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(Versions(this, "deleteAll"));
+    }
+    /**
+     * Deletes the specified version of the file.
+     *
+     * @param versionId The ID of the file version to delete.
+     */
+    deleteById(versionId) {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(Versions(this, `deleteById(vid=${versionId})`));
+    }
+    /**
+     * Recycles the specified version of the file.
+     *
+     * @param versionId The ID of the file version to delete.
+     */
+    recycleByID(versionId) {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(Versions(this, `recycleByID(vid=${versionId})`));
+    }
+    /**
+     * Deletes the file version object with the specified version label.
+     *
+     * @param label The version label of the file version to delete, for example: 1.2
+     */
+    deleteByLabel(label) {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(Versions(this, `deleteByLabel(versionlabel='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(label)}')`));
+    }
+    /**
+     * Recycles the file version object with the specified version label.
+     *
+     * @param label The version label of the file version to delete, for example: 1.2
+     */
+    recycleByLabel(label) {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(Versions(this, `recycleByLabel(versionlabel='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(label)}')`));
+    }
+    /**
+     * Creates a new file version from the file specified by the version label.
+     *
+     * @param label The version label of the file version to restore, for example: 1.2
+     */
+    restoreByLabel(label) {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(Versions(this, `restoreByLabel(versionlabel='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(label)}')`));
+    }
+};
+_Versions = (0,tslib__WEBPACK_IMPORTED_MODULE_10__.__decorate)([
+    (0,_decorators_js__WEBPACK_IMPORTED_MODULE_11__.defaultPath)("versions")
+], _Versions);
+
+const Versions = (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spInvokableFactory)(_Versions);
+/**
+ * Describes a single Version instance
+ *
+ */
+class _Version extends _readable_file_js__WEBPACK_IMPORTED_MODULE_7__.ReadableFile {
+    constructor() {
+        super(...arguments);
+        this.delete = (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.deleteable)();
+    }
+}
+const Version = (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spInvokableFactory)(_Version);
+/**
+ * Types for document check in.
+ * Minor = 0
+ * Major = 1
+ * Overwrite = 2
+ */
+var CheckinType;
+(function (CheckinType) {
+    CheckinType[CheckinType["Minor"] = 0] = "Minor";
+    CheckinType[CheckinType["Major"] = 1] = "Major";
+    CheckinType[CheckinType["Overwrite"] = 2] = "Overwrite";
+})(CheckinType || (CheckinType = {}));
+/**
+ * File move opertions
+ */
+var MoveOperations;
+(function (MoveOperations) {
+    /**
+     * Produce an error if a file with the same name exists in the destination
+     */
+    MoveOperations[MoveOperations["None"] = 0] = "None";
+    /**
+     * Overwrite a file with the same name if it exists. Value is 1.
+     */
+    MoveOperations[MoveOperations["Overwrite"] = 1] = "Overwrite";
+    /**
+     * Complete the move operation even if supporting files are separated from the file. Value is 8.
+     */
+    MoveOperations[MoveOperations["AllowBrokenThickets"] = 8] = "AllowBrokenThickets";
+    /**
+     * Boolean specifying whether to retain the source of the move's editor and modified by datetime.
+     */
+    MoveOperations[MoveOperations["RetainEditorAndModifiedOnMove"] = 2048] = "RetainEditorAndModifiedOnMove";
+})(MoveOperations || (MoveOperations = {}));
+var TemplateFileType;
+(function (TemplateFileType) {
+    TemplateFileType[TemplateFileType["StandardPage"] = 0] = "StandardPage";
+    TemplateFileType[TemplateFileType["WikiPage"] = 1] = "WikiPage";
+    TemplateFileType[TemplateFileType["FormPage"] = 2] = "FormPage";
+    TemplateFileType[TemplateFileType["ClientSidePage"] = 3] = "ClientSidePage";
+})(TemplateFileType || (TemplateFileType = {}));
+function applyChunckedOperationDefaults(props) {
+    return {
+        progress: () => null,
+        ...props,
+    };
+}
+/**
+ * Converts the source into a ReadableStream we can understand
+ */
+function sourceToReadableStream(source) {
+    if (isBlob(source)) {
+        return source.stream();
+    }
+    else if (hasOn(source)) {
+        // we probably have a passthrough stream from NodeFetch or some other type that supports "on(data)"
+        return new ReadableStream({
+            start(controller) {
+                source.on("data", (chunk) => {
+                    controller.enqueue(chunk);
+                });
+                source.on("end", () => {
+                    controller.close();
+                });
+            },
+        });
+    }
+    else if (isBuffer(source)) {
+        // we think we have a buffer
+        return new ReadableStream({
+            start(controller) {
+                controller.enqueue(source);
+                controller.close();
+            },
+        });
+    }
+    else if (isTransform(source)) {
+        return source.readable;
+    }
+    else {
+        return source;
+    }
+}
+const NAME = Symbol.toStringTag;
+function hasOn(object) {
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    return typeof object["on"] === "function";
+}
+// FROM: node-fetch source code
+function isBlob(object) {
+    return typeof object === "object" &&
+        typeof object.arrayBuffer === "function" &&
+        typeof object.type === "string" &&
+        typeof object.stream === "function" &&
+        typeof object.constructor === "function" &&
+        (/^(Blob|File)$/.test(object[NAME]) ||
+            /^(Blob|File)$/.test(object.constructor.name));
+}
+function isBuffer(object) {
+    return typeof object === "object" && typeof object.length === "number";
+}
+function isTransform(object) {
+    return typeof object === "object" && typeof object.readable === "object";
+}
+
+
+/***/ }),
+
+/***/ 6617:
+/*!*******************************************!*\
+  !*** ./node_modules/@pnp/sp/files/web.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack___webpack_module__, __unused_webpack___webpack_exports__, __webpack_require__) => {
+
+/* harmony import */ var _utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/encode-path-str.js */ 4729);
+/* harmony import */ var _webs_types_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../webs/types.js */ 3169);
+/* harmony import */ var _types_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./types.js */ 242);
+
+
+
+_webs_types_js__WEBPACK_IMPORTED_MODULE_1__._Web.prototype.getFileByServerRelativePath = function (fileRelativeUrl) {
+    return (0,_types_js__WEBPACK_IMPORTED_MODULE_2__.fileFromServerRelativePath)(this, fileRelativeUrl);
+};
+_webs_types_js__WEBPACK_IMPORTED_MODULE_1__._Web.prototype.getFileById = function (uniqueId) {
+    return (0,_types_js__WEBPACK_IMPORTED_MODULE_2__.File)(this, `getFileById('${uniqueId}')`);
+};
+_webs_types_js__WEBPACK_IMPORTED_MODULE_1__._Web.prototype.getFileByUrl = function (fileUrl) {
+    return (0,_types_js__WEBPACK_IMPORTED_MODULE_2__.File)(this, `getFileByUrl('${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_0__.encodePath)("!@p1::" + fileUrl)}')`);
+};
+
+
+/***/ }),
+
+/***/ 187:
+/*!***********************************************!*\
+  !*** ./node_modules/@pnp/sp/folders/types.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   _Folder: () => (/* binding */ _Folder)
+/* harmony export */ });
+/* unused harmony exports _Folders, Folders, Folder, folderFromServerRelativePath, folderFromAbsolutePath, folderFromPath */
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! tslib */ 4346);
+/* harmony import */ var _pnp_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pnp/core */ 1971);
+/* harmony import */ var _pnp_queryable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pnp/queryable */ 6844);
+/* harmony import */ var _spqueryable_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../spqueryable.js */ 2678);
+/* harmony import */ var _utils_odata_url_from_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/odata-url-from.js */ 905);
+/* harmony import */ var _items_types_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../items/types.js */ 132);
+/* harmony import */ var _decorators_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../decorators.js */ 6540);
+/* harmony import */ var _utils_extract_web_url_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/extract-web-url.js */ 2997);
+/* harmony import */ var _utils_to_resource_path_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../utils/to-resource-path.js */ 4259);
+/* harmony import */ var _utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/encode-path-str.js */ 4729);
+/* harmony import */ var _context_info_index_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../context-info/index.js */ 1734);
+/* harmony import */ var _batching_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../batching.js */ 8018);
+
+
+
+
+
+
+
+
+
+
+
+
+let _Folders = class _Folders extends _spqueryable_js__WEBPACK_IMPORTED_MODULE_2__._SPCollection {
+    /**
+     * Gets a folder by it's name
+     *
+     * @param name Folder's name
+     */
+    getByUrl(name) {
+        return Folder(this).concat(`('${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(name)}')`);
+    }
+    /**
+     * Adds a new folder by path and should be prefered over add
+     *
+     * @param serverRelativeUrl The server relative url of the new folder to create
+     * @param overwrite True to overwrite an existing folder, default false
+     */
+    async addUsingPath(serverRelativeUrl, overwrite = false) {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(Folders(this, `addUsingPath(DecodedUrl='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePath)(serverRelativeUrl)}',overwrite=${overwrite})`));
+    }
+};
+_Folders = (0,tslib__WEBPACK_IMPORTED_MODULE_9__.__decorate)([
+    (0,_decorators_js__WEBPACK_IMPORTED_MODULE_10__.defaultPath)("folders")
+], _Folders);
+
+const Folders = (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spInvokableFactory)(_Folders);
+class _Folder extends _spqueryable_js__WEBPACK_IMPORTED_MODULE_2__._SPInstance {
+    constructor() {
+        super(...arguments);
+        this.delete = (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.deleteableWithETag)();
+    }
+    /**
+     * Gets this folder's sub folders
+     *
+     */
+    get folders() {
+        return Folders(this);
+    }
+    /**
+     * Gets this folder's list item field values
+     *
+     */
+    get listItemAllFields() {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.SPInstance)(this, "listItemAllFields");
+    }
+    /**
+     * Gets the parent folder, if available
+     *
+     */
+    get parentFolder() {
+        return Folder(this, "parentFolder");
+    }
+    /**
+     * Gets this folder's properties
+     *
+     */
+    get properties() {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.SPInstance)(this, "properties");
+    }
+    /**
+     * Gets this folder's storage metrics information
+     *
+     */
+    get storageMetrics() {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.SPInstance)(this, "storagemetrics");
+    }
+    /**
+     * Updates folder's properties
+     * @param props Folder's properties to update
+     */
+    async update(props) {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPostMerge)(this, (0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_1__.body)(props));
+    }
+    /**
+     * Moves the folder to the Recycle Bin and returns the identifier of the new Recycle Bin item.
+     */
+    recycle() {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(Folder(this, "recycle"));
+    }
+    /**
+     * Gets the associated list item for this folder, loading the default properties
+     */
+    async getItem(...selects) {
+        const q = this.listItemAllFields;
+        const d = await q.select(...selects)();
+        if (d["odata.null"]) {
+            throw Error("No associated item was found for this folder. It may be the root folder, which does not have an item.");
+        }
+        return Object.assign((0,_items_types_js__WEBPACK_IMPORTED_MODULE_4__.Item)([this, (0,_utils_odata_url_from_js__WEBPACK_IMPORTED_MODULE_3__.odataUrlFrom)(d)]), d);
+    }
+    async moveByPath(destUrl, ...rest) {
+        let options = {
+            KeepBoth: false,
+            ShouldBypassSharedLocks: true,
+            RetainEditorAndModifiedOnMove: false,
+        };
+        if (rest.length === 1) {
+            if (typeof rest[0] === "boolean") {
+                options.KeepBoth = rest[0];
+            }
+            else if (typeof rest[0] === "object") {
+                options = { ...options, ...rest[0] };
+            }
+        }
+        return this.moveCopyImpl(destUrl, options, "MoveFolderByPath");
+    }
+    async copyByPath(destUrl, ...rest) {
+        let options = {
+            ShouldBypassSharedLocks: true,
+            ResetAuthorAndCreatedOnCopy: true,
+            KeepBoth: false,
+        };
+        if (rest.length === 1) {
+            if (typeof rest[0] === "boolean") {
+                options.KeepBoth = rest[0];
+            }
+            else if (typeof rest[0] === "object") {
+                options = { ...options, ...rest[0] };
+            }
+        }
+        return this.moveCopyImpl(destUrl, options, "CopyFolderByPath");
+    }
+    /**
+     * Deletes the folder object with options.
+     *
+     * @param parameters Specifies the options to use when deleting a folder.
+     */
+    async deleteWithParams(parameters) {
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(Folder(this, "DeleteWithParameters"), (0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_1__.body)({ parameters }));
+    }
+    /**
+     * Create the subfolder inside the current folder, as specified by the leafPath
+     *
+     * @param leafPath leafName of the new folder
+     */
+    async addSubFolderUsingPath(leafPath) {
+        await (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(Folder(this, "AddSubFolderUsingPath"), (0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_1__.body)({ leafPath: (0,_utils_to_resource_path_js__WEBPACK_IMPORTED_MODULE_11__.toResourcePath)(leafPath) }));
+        return this.folders.getByUrl(leafPath);
+    }
+    /**
+     * Gets the parent information for this folder's list and web
+     */
+    async getParentInfos() {
+        const urlInfo = await this.select("ServerRelativeUrl", "ListItemAllFields/ParentList/Id", "ListItemAllFields/ParentList/RootFolder/UniqueId", "ListItemAllFields/ParentList/RootFolder/ServerRelativeUrl", "ListItemAllFields/ParentList/RootFolder/ServerRelativePath", "ListItemAllFields/ParentList/ParentWeb/Id", "ListItemAllFields/ParentList/ParentWeb/Url", "ListItemAllFields/ParentList/ParentWeb/ServerRelativeUrl", "ListItemAllFields/ParentList/ParentWeb/ServerRelativePath").expand("ListItemAllFields/ParentList", "ListItemAllFields/ParentList/RootFolder", "ListItemAllFields/ParentList/ParentWeb")();
+        return {
+            Folder: {
+                ServerRelativeUrl: urlInfo.ServerRelativeUrl,
+            },
+            ParentList: {
+                Id: urlInfo.ListItemAllFields.ParentList.Id,
+                RootFolderServerRelativePath: urlInfo.ListItemAllFields.ParentList.RootFolder.ServerRelativePath,
+                RootFolderServerRelativeUrl: urlInfo.ListItemAllFields.ParentList.RootFolder.ServerRelativeUrl,
+                RootFolderUniqueId: urlInfo.ListItemAllFields.ParentList.RootFolder.UniqueId,
+            },
+            ParentWeb: {
+                Id: urlInfo.ListItemAllFields.ParentList.ParentWeb.Id,
+                ServerRelativePath: urlInfo.ListItemAllFields.ParentList.ParentWeb.ServerRelativePath,
+                ServerRelativeUrl: urlInfo.ListItemAllFields.ParentList.ParentWeb.ServerRelativeUrl,
+                Url: urlInfo.ListItemAllFields.ParentList.ParentWeb.Url,
+            },
+        };
+    }
+    /**
+     * Implementation of folder move/copy
+     *
+     * @param destUrl The server relative path to which the folder will be copied/moved
+     * @param options Any options
+     * @param methodName The method to call
+     * @returns An IFolder representing the moved or copied folder
+     */
+    moveCopyImpl(destUrl, options, methodName) {
+        // create a timeline we will manipulate for this request
+        const poster = Folder(this);
+        // add our pre-request actions, this fixes issues with batching hanging #2668
+        poster.on.pre((0,_pnp_core__WEBPACK_IMPORTED_MODULE_0__.noInherit)(async (url, init, result) => {
+            const { ServerRelativeUrl: srcUrl, ["odata.id"]: absoluteUrl } = await Folder(this).using((0,_batching_js__WEBPACK_IMPORTED_MODULE_8__.BatchNever)()).select("ServerRelativeUrl")();
+            const uri = new URL((0,_utils_extract_web_url_js__WEBPACK_IMPORTED_MODULE_5__.extractWebUrl)(absoluteUrl));
+            url = (0,_pnp_core__WEBPACK_IMPORTED_MODULE_0__.combine)(uri.href, `/_api/SP.MoveCopyUtil.${methodName}()`);
+            init = (0,_pnp_queryable__WEBPACK_IMPORTED_MODULE_1__.body)({
+                destPath: (0,_utils_to_resource_path_js__WEBPACK_IMPORTED_MODULE_11__.toResourcePath)((0,_pnp_core__WEBPACK_IMPORTED_MODULE_0__.isUrlAbsolute)(destUrl) ? destUrl : (0,_pnp_core__WEBPACK_IMPORTED_MODULE_0__.combine)(uri.origin, destUrl)),
+                options,
+                srcPath: (0,_utils_to_resource_path_js__WEBPACK_IMPORTED_MODULE_11__.toResourcePath)((0,_pnp_core__WEBPACK_IMPORTED_MODULE_0__.combine)(uri.origin, srcUrl)),
+            }, init);
+            return [url, init, result];
+        }));
+        return (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spPost)(poster).then(() => folderFromPath(this, destUrl));
+    }
+}
+(0,tslib__WEBPACK_IMPORTED_MODULE_9__.__decorate)([
+    _pnp_queryable__WEBPACK_IMPORTED_MODULE_1__.cancelableScope
+], _Folder.prototype, "moveByPath", null);
+(0,tslib__WEBPACK_IMPORTED_MODULE_9__.__decorate)([
+    _pnp_queryable__WEBPACK_IMPORTED_MODULE_1__.cancelableScope
+], _Folder.prototype, "copyByPath", null);
+const Folder = (0,_spqueryable_js__WEBPACK_IMPORTED_MODULE_2__.spInvokableFactory)(_Folder);
+/**
+ * Creates an IFolder instance given a base object and a server relative path
+ *
+ * @param base Valid SPQueryable from which the observers will be used and the web url extracted
+ * @param serverRelativePath The server relative url to the folder (ex: '/sites/dev/documents/folder3')
+ * @returns IFolder instance referencing the folder described by the supplied parameters
+ */
+function folderFromServerRelativePath(base, serverRelativePath) {
+    return Folder([base, (0,_utils_extract_web_url_js__WEBPACK_IMPORTED_MODULE_5__.extractWebUrl)(base.toUrl())], `_api/web/getFolderByServerRelativePath(decodedUrl='${(0,_utils_encode_path_str_js__WEBPACK_IMPORTED_MODULE_6__.encodePathNoURIEncode)(serverRelativePath)}')`);
+}
+/**
+ * Creates an IFolder instance given a base object and an absolute path
+ *
+ * @param base Valid SPQueryable from which the observers will be used
+ * @param serverRelativePath The absolute url to the folder (ex: 'https://tenant.sharepoint.com/sites/dev/documents/folder/')
+ * @returns IFolder instance referencing the folder described by the supplied parameters
+ */
+async function folderFromAbsolutePath(base, absoluteFolderPath) {
+    const { WebFullUrl } = await Folder(base).using((0,_batching_js__WEBPACK_IMPORTED_MODULE_8__.BatchNever)()).getContextInfo(absoluteFolderPath);
+    const { pathname } = new URL(absoluteFolderPath);
+    return folderFromServerRelativePath(Folder([base, (0,_pnp_core__WEBPACK_IMPORTED_MODULE_0__.combine)(WebFullUrl, "_api/web")]), decodeURIComponent(pathname));
+}
+/**
+ * Creates an IFolder intance given a base object and either an absolute or server relative path to a folder
+ *
+ * @param base Valid SPQueryable from which the observers will be used
+ * @param serverRelativePath server relative or absolute url to the file (ex: 'https://tenant.sharepoint.com/sites/dev/documents/folder' or '/sites/dev/documents/folder')
+ * @returns IFile instance referencing the file described by the supplied parameters
+ */
+async function folderFromPath(base, path) {
+    return ((0,_pnp_core__WEBPACK_IMPORTED_MODULE_0__.isUrlAbsolute)(path) ? folderFromAbsolutePath : folderFromServerRelativePath)(base, path);
+}
+
+
+/***/ }),
+
 /***/ 7881:
 /*!***************************************!*\
   !*** ./node_modules/@pnp/sp/index.js ***!
@@ -3951,8 +4871,11 @@ function spfi(root = "") {
 /*!*********************************************!*\
   !*** ./node_modules/@pnp/sp/items/index.js ***!
   \*********************************************/
-/***/ ((__unused_webpack___webpack_module__, __unused_webpack___webpack_exports__, __webpack_require__) => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Item: () => (/* reexport safe */ _types_js__WEBPACK_IMPORTED_MODULE_1__.Item)
+/* harmony export */ });
 /* harmony import */ var _list_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./list.js */ 5685);
 /* harmony import */ var _types_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./types.js */ 132);
 
@@ -3985,9 +4908,11 @@ function spfi(root = "") {
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Items: () => (/* binding */ Items)
+/* harmony export */   Item: () => (/* binding */ Item),
+/* harmony export */   Items: () => (/* binding */ Items),
+/* harmony export */   _Item: () => (/* binding */ _Item)
 /* harmony export */ });
-/* unused harmony exports _Items, _Item, Item, _ItemVersions, ItemVersions, _ItemVersion, ItemVersion */
+/* unused harmony exports _Items, _ItemVersions, ItemVersions, _ItemVersion, ItemVersion */
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! tslib */ 4346);
 /* harmony import */ var _spqueryable_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../spqueryable.js */ 2678);
 /* harmony import */ var _pnp_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pnp/core */ 1971);
@@ -4714,11 +5639,12 @@ _webs_types_js__WEBPACK_IMPORTED_MODULE_1__._Web.prototype.getCatalog = async fu
 /* harmony export */   _SPQueryable: () => (/* binding */ _SPQueryable),
 /* harmony export */   deleteable: () => (/* binding */ deleteable),
 /* harmony export */   deleteableWithETag: () => (/* binding */ deleteableWithETag),
+/* harmony export */   spGet: () => (/* binding */ spGet),
 /* harmony export */   spInvokableFactory: () => (/* binding */ spInvokableFactory),
 /* harmony export */   spPost: () => (/* binding */ spPost),
 /* harmony export */   spPostMerge: () => (/* binding */ spPostMerge)
 /* harmony export */ });
-/* unused harmony exports spGet, spPostDelete, spPostDeleteETag, spDelete, spPatch */
+/* unused harmony exports spPostDelete, spPostDeleteETag, spDelete, spPatch */
 /* harmony import */ var _pnp_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pnp/core */ 1971);
 /* harmony import */ var _pnp_queryable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pnp/queryable */ 6844);
 
@@ -5246,9 +6172,9 @@ var PageType;
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   encodePath: () => (/* binding */ encodePath)
+/* harmony export */   encodePath: () => (/* binding */ encodePath),
+/* harmony export */   encodePathNoURIEncode: () => (/* binding */ encodePathNoURIEncode)
 /* harmony export */ });
-/* unused harmony export encodePathNoURIEncode */
 /* harmony import */ var _pnp_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pnp/core */ 1971);
 
 /**
@@ -5745,7 +6671,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _microsoft_sp_webpart_base__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_microsoft_sp_webpart_base__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var CheckOutFileWpWebPartStrings__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! CheckOutFileWpWebPartStrings */ 7967);
 /* harmony import */ var CheckOutFileWpWebPartStrings__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(CheckOutFileWpWebPartStrings__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _components_CheckOutFileWp__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/CheckOutFileWp */ 9043);
+/* harmony import */ var _components_CheckOutFileWpv1__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/CheckOutFileWpv1 */ 9366);
 /* harmony import */ var _PnpConfig__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../PnpConfig */ 9230);
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -5814,7 +6740,7 @@ var CheckOutFileWpWebPart = /** @class */ (function (_super) {
         return _this;
     }
     CheckOutFileWpWebPart.prototype.render = function () {
-        var element = react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_CheckOutFileWp__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        var element = react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_CheckOutFileWpv1__WEBPACK_IMPORTED_MODULE_6__["default"], {
             userDisplayName: this.context.pageContext.user.displayName,
             context: this.context,
             userEmail: this.context.pageContext.user.email,

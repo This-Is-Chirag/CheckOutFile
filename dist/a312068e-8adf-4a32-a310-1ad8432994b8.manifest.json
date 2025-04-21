@@ -68,11 +68,6 @@
       "CheckOutFileWpWebPartStrings": {
         "type": "path",
         "path": "CheckOutFileWpWebPartStrings_en-us.js"
-      },
-      "@microsoft/sp-http": {
-        "type": "component",
-        "id": "c07208f0-ea3b-4c1a-9965-ac1b825211a6",
-        "version": "1.20.0"
       }
     }
   }
